@@ -25,13 +25,14 @@ contract LibTECApproval is
     LibEIP712Domain
 {
     // Hash for the EIP712 TEC approval message
-    bytes32 constant internal EIP712_TEC_APPROVAL_SCHEMA_HASH = keccak256(abi.encodePacked(
-        "TECApproval(",
-        "bytes32 transactionHash,",
-        "bytes transactionSignature,",
-        "uint256 approvalExpirationTimeSeconds",
-        ")"
-    ));
+    // keccak256(abi.encodePacked(
+    //     "TECApproval(",
+    //     "bytes32 transactionHash,",
+    //     "bytes transactionSignature,",
+    //     "uint256 approvalExpirationTimeSeconds",
+    //     ")"
+    // ));
+    bytes32 constant internal EIP712_TEC_APPROVAL_SCHEMA_HASH = 0xea47fa0db488bc42607bfc08c060aec79f21d71fd14cc83262348a01a4cb0b5d;
 
     struct TECApproval {
         bytes32 transactionHash;                // EIP712 hash of the transaction, using the domain separator of this contract.
@@ -60,8 +61,7 @@ contract LibTECApproval is
         returns (bytes32 result)
     {
         bytes32 schemaHash = EIP712_TEC_APPROVAL_SCHEMA_HASH;
-        bytes32 transactionSignatureHash = keccak256(approval.transactionSignature);
-        // TODO(abandeali1): optimize by loading from memory in assembly
+        bytes memory transactionSignature = approval.transactionSignature;
         bytes32 transactionHash = approval.transactionHash;
         uint256 approvalExpirationTimeSeconds = approval.approvalExpirationTimeSeconds;
 
@@ -74,6 +74,9 @@ contract LibTECApproval is
         // ));
 
         assembly {
+            // Compute hash of transaction signature
+            let transactionSignatureHash := keccak256(add(transactionSignature, 32), mload(transactionSignature))
+        
             // Load free memory pointer
             let memPtr := mload(64)
 
