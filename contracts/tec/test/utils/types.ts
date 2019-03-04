@@ -3,6 +3,7 @@ import { BigNumber } from '@0x/utils';
 
 export interface TECApproval {
     transaction: SignedZeroExTransaction;
+    txOrigin: string;
     approvalExpirationTimeSeconds: BigNumber;
 }
 
