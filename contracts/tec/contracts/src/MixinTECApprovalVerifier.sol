@@ -105,7 +105,7 @@ contract MixinTECApprovalVerifier is
         address[] memory approvalSignerAddresses = new address[](0);
 
         uint256 signaturesLength = approvalSignatures.length;
-        for (uint256 i = 0; i < signaturesLength; i++) {
+        for (uint256 i = 0; i != signaturesLength; i++) {
             // Create approval message
             uint256 currentApprovalExpirationTimeSeconds = approvalExpirationTimeSeconds[i];
             TECApproval memory approval = TECApproval({
@@ -134,7 +134,7 @@ contract MixinTECApprovalVerifier is
         approvalSignerAddresses = approvalSignerAddresses.append(tx.origin);
         
         uint256 ordersLength = orders.length;
-        for (uint256 i = 0; i < ordersLength; i++) {
+        for (uint256 i = 0; i != ordersLength; i++) {
             // Do not check approval if the order's senderAddress is null
             if (orders[i].senderAddress == address(0)) {
                 continue;
